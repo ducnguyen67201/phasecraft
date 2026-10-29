@@ -1,8 +1,8 @@
 # Phasecraft
 
-**A practical operating procedure for human-led engineering with a coordinator and accountable phase owners.**
+**A practical operating procedure for coordinator-led agent engineering.**
 
-Turn a large request into bounded deliveries, run independent work in parallel, and keep decisions, dependencies, and evidence outside any one conversation.
+A human sets the goal and authority, a coordinator maintains the delivery map, and accountable phase owners carry bounded work through implementation and delivery. Run independent work in parallel and keep decisions, dependencies, and evidence outside any one conversation.
 
 Phasecraft packages a workflow developed during a real engineering project. Version 0.1 is a skill and documentation kit: a procedure to use with your coding assistant and existing Git tooling. The single-coordinator approach has been used in practice; multi-coordinator operation and retrieval-backed memory are design proposals, not implemented capabilities. No comparative performance study has been conducted.
 
@@ -20,6 +20,19 @@ Start with one coordinator and two or three phase owners. Increase concurrency w
 The **human** sets the outcome, authority, and approval policy. The **coordinator** maintains the map: scope, ownership, dependencies, approvals, and next actions. Each **phase owner** implements its work, integrates its branch, reviews and verifies the result, requests any required human approvals, and performs approved publication and merge actions.
 
 The coordinator needs a reliable map, not every implementation detail in its context window. Detailed investigation stays with the owner; durable handoffs carry what successors need.
+
+### Hierarchy assigns responsibility; the graph determines readiness
+
+Coordinator-led agent engineering uses two structures together:
+
+| Structure               | What it describes                                                                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ownership hierarchy** | The human sets policy, the coordinator delegates and tracks work, and phase owners deliver their assigned outcomes. Owners request required human approvals directly.  |
+| **Dependency graph**    | Phases depend on specific artifacts and evidence. Separate edges govern when implementation can start, when integration is possible, and when publication can proceed. |
+
+Sharing a coordinator does not make phases sequential. For example, an API owner and a screen owner can work concurrently from a frozen contract. The screen owner can prepare its preview immediately, but final integration needs the actual API, and publication waits for its verified merge when that dependency is required. Phase numbering and reporting relationships do not create technical dependencies.
+
+The hierarchy keeps accountability clear; the dependency graph makes useful parallelism visible. Both are maintained through project records and owner handoffs.
 
 ![Single-coordinator engineering workflow](docs/diagrams/phase-ownership-architecture.svg)
 

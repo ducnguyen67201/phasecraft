@@ -1,10 +1,18 @@
-# Engineering with a coordinator and phase owners
+# Coordinator-led agent engineering
 
 An engineering task becomes easier to follow when each part has an owner, a bounded outcome, and evidence that lets the next person continue. That remains true when some of the engineers are AI agents.
 
-Phasecraft captures a procedure for doing this across separate agent conversations. A coordinator maintains the delivery map. Phase owners carry their assigned work through implementation, integration, review, verification, and the publication actions the human has authorized. The human sets policy and makes the decisions reserved to them.
+Phasecraft captures a procedure for **coordinator-led agent engineering** across separate agent conversations. A coordinator maintains the delivery map. Phase owners carry their assigned work through implementation, integration, review, verification, and the publication actions the human has authorized. The human sets policy and makes the decisions reserved to them.
 
 This is a documented working method. It is not a claim that adding agents always improves delivery, or that the procedure has passed a comparative benchmark. Its value has to be assessed on the work it helps a team complete.
+
+## Hierarchy and dependency graph
+
+The ownership hierarchy describes who is responsible: the human sets direction and authority, the coordinator organizes delivery, and phase owners finish their assigned outcomes. It is a delegation structure. Owners still request required approvals directly from the human and retain engineering judgment within their scope; messages and decisions do not all have to pass through the coordinator.
+
+The dependency graph describes what each delivery needs. Its nodes are phases or outcomes, and its edges identify required contracts, source, or evidence. Two phases under the same coordinator may run concurrently when their inputs and owned surfaces permit it. A phase number or position in the hierarchy does not create a prerequisite.
+
+For example, an API owner and a screen owner can both start from an agreed catalog contract. The screen owner can prepare its preview while the API is built, then integrate the real API and wait for its verified merge before publication. The hierarchy assigns both owners; the graph determines when each part of their work is ready.
 
 ## The coordinator owns the map
 
@@ -28,7 +36,7 @@ Each concurrent implementation owner needs an isolated checkout or worktree, wit
 
 A serial phase list often hides opportunities for concurrency. A catalog owner may be able to implement validation and persistence while an upstream registration owner finishes authenticated writes. The downstream owner still needs the actual merged registration implementation before completing final integration.
 
-Record those as separate edges. One edge says what is sufficient to begin useful work. Another says what must be integrated and verified before publication. A third may govern acceptance or deployment.
+Record execution, integration, and publication as separate dependency edges. Execution identifies the inputs sufficient to begin useful work. Integration identifies the actual compatible source and environment needed to compose and verify the result. Publication identifies any merged predecessor required before submitting the delivery. Acceptance and deployment can have their own additional prerequisites.
 
 When owners share an interface before it merges, freeze a small checkpoint. Include the exact files, hashes, contract semantics, base revision, and limits. A consumer verifies the packet and keeps the borrowed dependency distinguishable from its own changes. After the producer merges, the consumer reconciles against actual merged source and runs the checks affected by any difference.
 
@@ -74,7 +82,7 @@ Obsidian notes or a retrieval pipeline could make this record easier to search. 
 
 Start with one coordinator and two or three independently useful phases. Try the procedure on a bounded change. Track practical friction: repeated approvals, duplicate audits, stale dependencies, integration rework, and the time spent maintaining records.
 
-Several coordinators may eventually make sense for separate subsystems. That requires clear ownership of shared contracts and a single authority for each state record. Two coordinators must not dispatch competing writers or independently declare the same dependency complete. The proposed [memory and federation design](../architecture/memory-and-federation.md) discusses that boundary; it is not a running orchestration service.
+Several coordinators may eventually make sense for separate subsystems. That proposed federation would extend the ownership hierarchy while the dependency graph continued across subsystem boundaries. It requires clear ownership of shared contracts and a single authority for each state record. Two coordinators must not dispatch competing writers or independently declare the same dependency complete. The proposed [memory and federation design](../architecture/memory-and-federation.md) discusses that boundary; it is not a running orchestration service.
 
 The method still costs attention. Someone must review scope, judge evidence, maintain interfaces, and resolve real disagreements. Agents can produce plausible but incompatible work, and more parallelism can increase integration cost. Begin with a process you can inspect, then automate the parts whose repeated use justifies it.
 
