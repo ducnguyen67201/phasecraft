@@ -10,6 +10,8 @@ A practical skill and playbook for delivering engineering work across separate a
 
 The hierarchy defines responsibility. The dependency graph determines what can run in parallel and what must wait.
 
+[![Coordinator and phase ownership](docs/diagrams/phase-ownership-architecture.svg)](docs/architecture/workflow.md)
+
 ## Get started
 
 1. Follow the [quickstart](docs/guides/quickstart.md).
