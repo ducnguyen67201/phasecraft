@@ -1,0 +1,615 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:phasecraft:registry:v1",
+  "title": "Phasecraft coordination registry v1",
+  "description": "Portable records, not an execution engine. Cross-record and delivery invariants also require human/agent interpretation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "project",
+    "coordinator",
+    "policy",
+    "phases",
+    "approvals",
+    "completionCondition"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coordinator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sessionId"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "policy": {
+      "type": "string"
+    },
+    "completionCondition": {
+      "type": "string"
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/approval"
+      }
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/phase"
+      }
+    }
+  },
+  "$defs": {
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "action",
+        "status",
+        "authority",
+        "source",
+        "scope",
+        "artifact",
+        "constraints"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "enum": [
+            "dispatch",
+            "design",
+            "publish",
+            "merge",
+            "deploy",
+            "infrastructure",
+            "resume"
+          ]
+        },
+        "status": {
+          "enum": ["pending", "approved", "rejected", "superseded"]
+        },
+        "authority": {
+          "type": ["string", "null"]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["location", "verification", "recordedAt"],
+              "properties": {
+                "location": {
+                  "type": "string"
+                },
+                "verification": {
+                  "enum": ["direct", "owner-relayed"]
+                },
+                "recordedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "identity", "digest"],
+          "properties": {
+            "kind": {
+              "type": "string"
+            },
+            "identity": {
+              "type": ["string", "null"]
+            },
+            "digest": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "approved"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "authority": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "object"
+              },
+              "artifact": {
+                "properties": {
+                  "identity": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phaseId", "gate", "artifact", "satisfied", "evidence"],
+      "properties": {
+        "phaseId": {
+          "type": "string"
+        },
+        "gate": {
+          "enum": ["execution", "integration", "publication"]
+        },
+        "artifact": {
+          "type": "string"
+        },
+        "satisfied": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "producer",
+        "state",
+        "manifest",
+        "consumerVerified",
+        "limits"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "producer": {
+          "type": "string"
+        },
+        "state": {
+          "enum": ["frozen", "merged"]
+        },
+        "manifest": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "algorithm", "digest"],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "algorithm": {
+                "const": "sha256"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        "consumerVerified": {
+          "type": "boolean"
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "merge": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prUrl",
+            "head",
+            "base",
+            "merged",
+            "mergeCommit",
+            "mergedAt",
+            "verifier"
+          ],
+          "properties": {
+            "prUrl": {
+              "type": "string",
+              "format": "uri"
+            },
+            "head": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "base": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "merged": {
+              "const": true
+            },
+            "mergeCommit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "mergedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "verifier": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "status",
+        "owner",
+        "brief",
+        "handoff",
+        "dependencies",
+        "checkpoints",
+        "approvalIds",
+        "pullRequest",
+        "merge",
+        "acceptance",
+        "retirement",
+        "monitoring",
+        "resources",
+        "waitReason",
+        "nextAction"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "STAGED",
+            "RUNNING",
+            "READY_FOR_REVIEW",
+            "AWAITING_APPROVAL",
+            "PR_OPEN",
+            "MERGED",
+            "COMPLETE"
+          ]
+        },
+        "owner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sessionId", "workspace", "branch"],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "sessionId": {
+              "type": ["string", "null"]
+            },
+            "workspace": {
+              "type": ["string", "null"]
+            },
+            "branch": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "brief": {
+          "type": "string"
+        },
+        "handoff": {
+          "type": ["string", "null"]
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          }
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checkpoint"
+          }
+        },
+        "approvalIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "pullRequest": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["url", "head", "base", "state"],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "head": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "base": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "state": {
+                  "enum": ["OPEN", "CLOSED"]
+                }
+              }
+            }
+          ]
+        },
+        "merge": {
+          "$ref": "#/$defs/merge"
+        },
+        "acceptance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "evidence"],
+          "properties": {
+            "status": {
+              "enum": ["pending", "accepted", "rejected"]
+            },
+            "evidence": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "retirement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["retired", "reason"],
+          "properties": {
+            "retired": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "monitoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "cursor"],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "cursor": {
+              "type": ["string", "null"]
+            }
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "identity",
+              "owner",
+              "state",
+              "cleanupAuthority"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "identity": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "cleanupAuthority": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        },
+        "waitReason": {
+          "type": ["string", "null"]
+        },
+        "nextAction": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "merge": {
+                "type": "object"
+              }
+            },
+            "required": ["merge"]
+          },
+          "then": {
+            "properties": {
+              "retirement": {
+                "properties": {
+                  "retired": {
+                    "const": true
+                  }
+                }
+              },
+              "monitoring": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  },
+                  "cursor": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "acceptance": {
+                "properties": {
+                  "status": {
+                    "const": "accepted"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "MERGED"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "merge": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "retirement": {
+                "properties": {
+                  "retired": {
+                    "const": true
+                  }
+                },
+                "required": ["retired"]
+              }
+            },
+            "required": ["retirement"]
+          },
+          "then": {
+            "properties": {
+              "monitoring": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  },
+                  "cursor": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              },
+              "pullRequest": {
+                "type": "object"
+              }
+            },
+            "required": ["status", "pullRequest"]
+          },
+          "then": {
+            "properties": {
+              "merge": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

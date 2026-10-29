@@ -1,0 +1,8 @@
+# Local diagram viewers, receipts, and review material
+.archify/
+.local/
+*.html
+*.delivery.json
+*.finalize-summary.json
+__pycache__/
+.DS_Store

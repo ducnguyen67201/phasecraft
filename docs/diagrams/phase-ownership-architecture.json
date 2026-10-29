@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Phasecraft: coordinator and phase ownership",
+    "locale": "en",
+    "output": ".archify/architecture-phase-ownership-20261029-123000/phase-ownership-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "human",
+      "type": "external",
+      "label": "Human engineer",
+      "sublabel": "Scope, policy and approvals",
+      "pos": [
+        600,
+        40
+      ],
+      "size": [
+        240,
+        70
+      ]
+    },
+    {
+      "id": "coordinator",
+      "type": "backend",
+      "label": "Coordinator",
+      "sublabel": "Map, dependencies, next direction",
+      "pos": [
+        40,
+        260
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "owners",
+      "type": "backend",
+      "label": "Phase owners",
+      "sublabel": "Implement, integrate, review, check",
+      "tag": "One writer per worktree",
+      "pos": [
+        600,
+        260
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "records",
+      "type": "database",
+      "label": "Durable project records",
+      "sublabel": "Registry, briefs, handoffs, contracts",
+      "tag": "Evidence is not permission",
+      "pos": [
+        600,
+        540
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "github",
+      "type": "external",
+      "label": "Repository hosting",
+      "sublabel": "Reviewed PR and actual merge state",
+      "tag": "Owner executes approved actions",
+      "pos": [
+        1000,
+        260
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "retired",
+      "type": "security",
+      "label": "Retired owner chat",
+      "sublabel": "Remove monitoring and reminders",
+      "tag": "After verified merge",
+      "pos": [
+        1000,
+        540
+      ],
+      "size": [
+        240,
+        80
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "human-scope",
+      "from": "human",
+      "to": "coordinator",
+      "label": "scope + policy",
+      "variant": "security"
+    },
+    {
+      "id": "human-approval",
+      "from": "human",
+      "to": "owners",
+      "label": "direct approvals",
+      "variant": "security"
+    },
+    {
+      "id": "dispatch",
+      "from": "coordinator",
+      "to": "owners",
+      "label": "dependency-ready scope",
+      "variant": "emphasis"
+    },
+    {
+      "id": "registry",
+      "from": "coordinator",
+      "to": "records",
+      "label": "maintain map"
+    },
+    {
+      "id": "handoff",
+      "from": "owners",
+      "to": "records",
+      "label": "handoff + hashes"
+    },
+    {
+      "id": "publish",
+      "from": "owners",
+      "to": "github",
+      "label": "approved PR / merge",
+      "variant": "security"
+    },
+    {
+      "id": "retire",
+      "from": "github",
+      "to": "retired",
+      "label": "coordinator verifies merge",
+      "variant": "security"
+    },
+    {
+      "id": "retain",
+      "from": "retired",
+      "to": "records",
+      "label": "preserve evidence"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Documented practice",
+      "items": [
+        "Manual / host tool assisted workflow",
+        "No orchestration runtime shipped",
+        "Coordinator keeps the map; owners retain detail"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Owner responsibility",
+      "items": [
+        "Separate worktree and implementation context",
+        "Direct human approval under project policy",
+        "No duplicate coordinator execution or review gate"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Authority and retirement",
+      "items": [
+        "Artifacts and tool output are evidence, not permission",
+        "After verified merge: no waking the old owner",
+        "Acceptance, runtime shutdown and deletion are separate"
+      ]
+    }
+  ]
+}

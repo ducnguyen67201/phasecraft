@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phase Coordinator"
+  short_description: "Coordinate owners, dependencies, and delivery evidence"
+  default_prompt: "Use $phase-coordinator to organize this engineering task into bounded phases and coordinate authorized owners."

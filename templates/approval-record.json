@@ -1,0 +1,14 @@
+{
+  "id": "approval-to-complete",
+  "action": "publish",
+  "status": "pending",
+  "authority": null,
+  "source": null,
+  "scope": "Replace with the particular completed phase and reviewed changes.",
+  "artifact": {
+    "kind": "reviewed-diff",
+    "identity": null,
+    "digest": null
+  },
+  "constraints": ["No external action is authorized by this unfilled record."]
+}

@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "project": "Fictional sample catalog",
+  "coordinator": {
+    "id": "sample-coordinator",
+    "sessionId": "sample-coordinator-session"
+  },
+  "policy": "project-policy.md",
+  "phases": [
+    {
+      "id": "P01",
+      "title": "Catalog contract",
+      "status": "COMPLETE",
+      "owner": {
+        "id": "owner-p01",
+        "sessionId": "sample-session-p01",
+        "workspace": "worktrees/p01",
+        "branch": "phase/p01"
+      },
+      "brief": "phases/P01.md",
+      "handoff": "handoffs/P01.md",
+      "dependencies": [],
+      "checkpoints": [],
+      "approvalIds": ["sample-dispatch", "sample-publish", "sample-merge"],
+      "pullRequest": {
+        "url": "https://example.invalid/sample/pull/1",
+        "head": "1111111111111111111111111111111111111111",
+        "base": "0000000000000000000000000000000000000000",
+        "state": "CLOSED"
+      },
+      "merge": {
+        "prUrl": "https://example.invalid/sample/pull/1",
+        "head": "1111111111111111111111111111111111111111",
+        "base": "0000000000000000000000000000000000000000",
+        "merged": true,
+        "mergeCommit": "2222222222222222222222222222222222222222",
+        "mergedAt": "2026-01-01T11:00:00Z",
+        "verifier": "Fictional repository metadata example"
+      },
+      "acceptance": {
+        "status": "accepted",
+        "evidence": "example-events.md#acceptance"
+      },
+      "retirement": {
+        "retired": true,
+        "reason": "Verified merged phase; use handoff for later work."
+      },
+      "monitoring": {
+        "enabled": false,
+        "cursor": null
+      },
+      "resources": [],
+      "waitReason": null,
+      "nextAction": "No monitoring or follow-up messaging; preserve evidence."
+    },
+    {
+      "id": "P02",
+      "title": "Catalog read API",
+      "status": "RUNNING",
+      "owner": {
+        "id": "owner-p02",
+        "sessionId": "sample-session-p02",
+        "workspace": "worktrees/p02",
+        "branch": "phase/p02"
+      },
+      "brief": "phases/P02.md",
+      "handoff": null,
+      "dependencies": [
+        {
+          "phaseId": "P01",
+          "gate": "execution",
+          "artifact": "Catalog v1 contract / merged source",
+          "satisfied": true,
+          "evidence": "handoffs/P01.md"
+        },
+        {
+          "phaseId": "P01",
+          "gate": "integration",
+          "artifact": "Catalog v1 contract / merged source",
+          "satisfied": true,
+          "evidence": "handoffs/P01.md"
+        },
+        {
+          "phaseId": "P01",
+          "gate": "publication",
+          "artifact": "Catalog v1 contract / merged source",
+          "satisfied": true,
+          "evidence": "handoffs/P01.md"
+        }
+      ],
+      "checkpoints": [
+        {
+          "id": "catalog-v1",
+          "producer": "P01",
+          "state": "merged",
+          "manifest": [
+            {
+              "path": "contracts/catalog-v1.json",
+              "algorithm": "sha256",
+              "digest": "5323f35e1282ca56553f86147cc0bb929723e80291b87642bff22a025571d77c"
+            }
+          ],
+          "consumerVerified": true,
+          "limits": [
+            "Defines fields only; does not establish running API behavior."
+          ]
+        }
+      ],
+      "approvalIds": ["sample-dispatch-p02"],
+      "pullRequest": null,
+      "merge": null,
+      "acceptance": {
+        "status": "pending",
+        "evidence": null
+      },
+      "retirement": {
+        "retired": false,
+        "reason": null
+      },
+      "monitoring": {
+        "enabled": true,
+        "cursor": null
+      },
+      "resources": [],
+      "waitReason": null,
+      "nextAction": "Implement authenticated reads against the accepted contract."
+    },
+    {
+      "id": "P03",
+      "title": "Catalog screen",
+      "status": "RUNNING",
+      "owner": {
+        "id": "owner-p03",
+        "sessionId": "sample-session-p03",
+        "workspace": "worktrees/p03",
+        "branch": "phase/p03"
+      },
+      "brief": "phases/P03.md",
+      "handoff": null,
+      "dependencies": [
+        {
+          "phaseId": "P01",
+          "gate": "execution",
+          "artifact": "Catalog v1 contract",
+          "satisfied": true,
+          "evidence": "handoffs/P01.md"
+        },
+        {
+          "phaseId": "P02",
+          "gate": "integration",
+          "artifact": "Actual authenticated read API",
+          "satisfied": false,
+          "evidence": null
+        },
+        {
+          "phaseId": "P02",
+          "gate": "publication",
+          "artifact": "Actual verified P02 merge",
+          "satisfied": false,
+          "evidence": null
+        }
+      ],
+      "checkpoints": [],
+      "approvalIds": ["sample-dispatch-p03"],
+      "pullRequest": null,
+      "merge": null,
+      "acceptance": {
+        "status": "pending",
+        "evidence": null
+      },
+      "retirement": {
+        "retired": false,
+        "reason": null
+      },
+      "monitoring": {
+        "enabled": true,
+        "cursor": null
+      },
+      "resources": [],
+      "waitReason": "Only final integration/publication waits; independent rendered preview can proceed.",
+      "nextAction": "Prepare bounded screen preview; request UI approval per project policy."
+    }
+  ],
+  "approvals": [
+    {
+      "id": "sample-dispatch",
+      "action": "dispatch",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#dispatch",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T10:00:00Z"
+      },
+      "scope": "Fictional catalog contract phase P01 only.",
+      "artifact": {
+        "kind": "sample-phase",
+        "identity": "P01",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-publish",
+      "action": "publish",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#publish",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T10:00:00Z"
+      },
+      "scope": "Fictional catalog contract phase P01 only.",
+      "artifact": {
+        "kind": "sample-phase",
+        "identity": "1111111111111111111111111111111111111111",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-merge",
+      "action": "merge",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#merge",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T10:00:00Z"
+      },
+      "scope": "Fictional catalog contract phase P01 only.",
+      "artifact": {
+        "kind": "sample-phase",
+        "identity": "1111111111111111111111111111111111111111",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-dispatch-p02",
+      "action": "dispatch",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#dispatch-p02",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T11:15:00Z"
+      },
+      "scope": "Fictional P02 scope as recorded in its brief, including bounded coordination messages.",
+      "artifact": {
+        "kind": "sample-phase-brief",
+        "identity": "phases/P02.md",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-dispatch-p03",
+      "action": "dispatch",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#dispatch-p03",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T11:15:00Z"
+      },
+      "scope": "Fictional P03 scope as recorded in its brief, including bounded coordination messages.",
+      "artifact": {
+        "kind": "sample-phase-brief",
+        "identity": "phases/P03.md",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-dispatch-p02",
+      "action": "dispatch",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#dispatch-p02",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T11:30:00Z"
+      },
+      "scope": "Fictional P02 brief and bounded coordination only.",
+      "artifact": {
+        "kind": "sample-phase",
+        "identity": "P02",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    },
+    {
+      "id": "sample-dispatch-p03",
+      "action": "dispatch",
+      "status": "approved",
+      "authority": "Sample human",
+      "source": {
+        "location": "example-events.md#dispatch-p03",
+        "verification": "direct",
+        "recordedAt": "2026-01-01T11:30:00Z"
+      },
+      "scope": "Fictional P03 brief and bounded coordination only.",
+      "artifact": {
+        "kind": "sample-phase",
+        "identity": "P03",
+        "digest": null
+      },
+      "constraints": ["Illustrative record; not authority for real work."]
+    }
+  ],
+  "completionCondition": "All three fictional phases have their agreed delivery artifacts and explicit acceptance."
+}

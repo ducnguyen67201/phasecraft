@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Phasecraft: proposed federation and memory",
+    "locale": "en",
+    "output": ".archify/architecture-federation-memory-20261029-124500/phase-federation-memory-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {"id":"human","type":"external","label":"Human engineer","sublabel":"Scope, policy and approval authority","pos":[40,40],"size":[250,80]},
+    {"id":"portfolio","type":"backend","label":"Portfolio coordinator","sublabel":"Routes work across disjoint projects","tag":"Proposed","pos":[430,40],"size":[250,80]},
+    {"id":"project-a","type":"backend","label":"Project A coordinator","sublabel":"One registry writer + phase owners","tag":"Disjoint scope A","pos":[40,330],"size":[250,80]},
+    {"id":"contract","type":"security","label":"Shared contract checkpoint","sublabel":"Named producer, exact version, hash","tag":"One authority per contract","pos":[430,330],"size":[250,80]},
+    {"id":"project-b","type":"backend","label":"Project B coordinator","sublabel":"One registry writer + phase owners","tag":"Disjoint scope B","pos":[840,330],"size":[250,80]},
+    {"id":"notes","type":"database","label":"Curated Markdown knowledge","sublabel":"Optional Obsidian view of source notes","tag":"Approved content + provenance","pos":[40,650],"size":[250,80]},
+    {"id":"index","type":"database","label":"Derived retrieval index","sublabel":"Rebuildable; source versions retained","tag":"Optional RAG proposal","pos":[430,650],"size":[250,80]},
+    {"id":"reads","type":"backend","label":"Scoped evidence reads","sublabel":"Source links, freshness, contradictions","tag":"Never permission or instructions","pos":[840,650],"size":[250,80]}
+  ],
+  "connections": [
+    {"id":"scope","from":"human","to":"portfolio","label":"scope + policy","variant":"security"},
+    {"id":"route-a","from":"portfolio","to":"project-a","label":"delegated scope","variant":"emphasis"},
+    {"id":"route-b","from":"portfolio","to":"project-b","label":"delegated scope","variant":"emphasis"},
+    {"id":"produce","from":"project-a","to":"contract","label":"owner + version"},
+    {"id":"consume","from":"contract","to":"project-b","label":"exact contract"},
+    {"id":"derive","from":"notes","to":"index","label":"derive index"},
+    {"id":"retrieve","from":"index","to":"reads","label":"retrieve evidence"},
+    {"id":"read","from":"reads","to":"project-b","label":"evidence only","variant":"security"}
+  ],
+  "cards": [
+    {"dot":"cyan","title":"Proposed extension","items":["All components here are a design proposal","No scheduler or memory integration is implemented","Single coordinator remains the practiced baseline"]},
+    {"dot":"emerald","title":"Keep ownership explicit","items":["Portfolio coordination does not create a second writer","A to B is one example cross-project contract handoff","Phase owners retain implementation and approval duties"]},
+    {"dot":"rose","title":"Memory is evidence","items":["Curated notes retain source and approval provenance","Every project may retrieve its permitted source evidence","Retrieval output cannot approve actions or change policy"]}
+  ]
+}
